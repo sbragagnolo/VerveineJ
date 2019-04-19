@@ -139,7 +139,12 @@ public class VerveineVisitor extends ASTVisitor {
      * Note: allLocals = ! classSummary
      */
     private boolean allLocals = false;
-	
+
+	/**
+	 * Whether to output the accesses of a local variable inside its own parent
+	 */
+	private boolean localAccess = false;
+
     /**
      * A stack that keeps the current definition context (package/class/method)
      */
@@ -173,6 +178,15 @@ public class VerveineVisitor extends ASTVisitor {
     	this.allLocals = allLocals;
     	this.anchors = anchors;
     }
+
+	public VerveineVisitor(JavaDictionary dico, boolean classSummary, boolean allLocals, String anchors, boolean localAccess) {
+		this.dico = dico;
+		this.context = new EntityStack();
+		this.classSummary = classSummary;
+		this.allLocals = allLocals;
+		this.anchors = anchors;
+		this.localAccess = localAccess;
+	}
 
 	// VISITOR METHODS
 
@@ -785,6 +799,7 @@ public class VerveineVisitor extends ASTVisitor {
 		NamedEntity receiver = this.dico.ensureFamixImplicitVariable(null, Dictionary.SUPER_NAME, this.context.topType(),
 				context.topMethod(), /*persistIt*/!classSummary);
 		IMethodBinding bnd = node.resolveMethodBinding();
+		String calledName = node.getName().getFullyQualifiedName();
 		if (bnd == null) {
 			Iterator<Inheritance> iter = this.context.topType().getSuperInheritances().iterator();
 			eu.synectique.verveine.core.gen.famix.Type superClass = iter.next().getSuperclass();
@@ -793,10 +808,18 @@ public class VerveineVisitor extends ASTVisitor {
 					&& iter.hasNext()) {
 				iter.next().getSuperclass();
 			}
-			methodInvocation(bnd, node.getName().getFullyQualifiedName(), receiver, superClass, node.arguments());
+			methodInvocation(bnd, calledName, receiver, superClass, node.arguments());
 		} else {
-			methodInvocation(bnd, node.getName().getFullyQualifiedName(), receiver, /*methOwner*/null,
+			methodInvocation(bnd, calledName, receiver, /*methOwner*/null,
 					node.arguments());
+		}
+
+		Invocation lastInvok = context.getLastInvocation();
+		if (anchors.equals(VerveineJParser.ANCHOR_ASSOC)
+				// check that lastInvocation correspond to current one
+				&& (lastInvok != null) && (lastInvok.getSender() == context.topMethod())
+				&& (lastInvok.getReceiver() == receiver) && (lastInvok.getSignature().startsWith(calledName))) {
+			dico.addSourceAnchor(lastInvok, node, /*oneLineAnchor*/true);
 		}
 
 		return super.visit(node);
@@ -1784,7 +1807,7 @@ public class VerveineVisitor extends ASTVisitor {
 			if (classSummary) {
 				//dico.addFamixReference(findHighestType(accessor), findHighestType(accessed), /*lastReference*/null);
 				// TODO set FileAnchor to Reference
-			} else if (accessed.getBelongsTo() != accessor) {
+			} else if (localAccess || accessed.getBelongsTo() != accessor) {
 				context.setLastAccess(
 						dico.addFamixAccess(accessor, accessed, /*isWrite*/isLHS, context.getLastAccess()));
 				//TODO set FileAnchor to Access
