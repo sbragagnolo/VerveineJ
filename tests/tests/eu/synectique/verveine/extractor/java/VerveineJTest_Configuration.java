@@ -95,7 +95,7 @@ public class VerveineJTest_Configuration {
 			assertEquals(IndexedFileAnchor.class, anc.getClass());
 			int sp = (Integer) ((IndexedFileAnchor)anc).getStartPos();
 			int ep = (Integer) ((IndexedFileAnchor)anc).getEndPos();
-			assertTrue("wrong statPos for Access: " + sp, (sp == 558) || (sp == 945) );
+			assertTrue("wrong startPos for Access: " + sp, (sp == 558) || (sp == 945) );
 			assertTrue("wrong endPos for Access: " + ep, (ep == 569) || (ep == 956) );
 		}
 		

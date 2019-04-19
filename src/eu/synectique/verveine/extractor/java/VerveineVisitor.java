@@ -782,7 +782,7 @@ public class VerveineVisitor extends ASTVisitor {
 
 	@SuppressWarnings("unchecked")
 	public boolean visit(SuperMethodInvocation node) {
-		NamedEntity receiver = this.dico.ensureFamixImplicitVariable(Dictionary.SUPER_NAME, this.context.topType(),
+		NamedEntity receiver = this.dico.ensureFamixImplicitVariable(null, Dictionary.SUPER_NAME, this.context.topType(),
 				context.topMethod(), /*persistIt*/!classSummary);
 		IMethodBinding bnd = node.resolveMethodBinding();
 		if (bnd == null) {
@@ -831,7 +831,7 @@ public class VerveineVisitor extends ASTVisitor {
 			if (signature.endsWith(";")) {
 				signature = signature.substring(0, signature.length() - 1);
 			}
-			ImplicitVariable receiver = dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME,
+			ImplicitVariable receiver = dico.ensureFamixImplicitVariable(null, Dictionary.SELF_NAME,
 					(Class) context.topType(), context.topMethod(), /*persistIt=true*/!classSummary);
 			Invocation invok = dico.addFamixInvocation(context.topMethod(), invoked, receiver, signature,
 					context.getLastInvocation());
@@ -866,7 +866,7 @@ public class VerveineVisitor extends ASTVisitor {
 			if (signature.endsWith(";")) {
 				signature = signature.substring(0, signature.length() - 1);
 			}
-			ImplicitVariable receiver = dico.ensureFamixImplicitVariable(Dictionary.SUPER_NAME,
+			ImplicitVariable receiver = dico.ensureFamixImplicitVariable(null, Dictionary.SUPER_NAME,
 					(Class) context.topType(), context.topMethod(), /*persistIt=true*/!classSummary);
 			Invocation invok = dico.addFamixInvocation(context.topMethod(), invoked, receiver, signature,
 					context.getLastInvocation());
@@ -1505,7 +1505,7 @@ public class VerveineVisitor extends ASTVisitor {
 	private NamedEntity getReceiver(Expression expr) {
 		// msg(), same as ThisExpression
 		if (expr == null) {
-			return this.dico.ensureFamixImplicitVariable(dico.SELF_NAME, this.context.topType(), context.topMethod(),
+			return this.dico.ensureFamixImplicitVariable(null, dico.SELF_NAME, this.context.topType(), context.topMethod(),
 					/*persistIt*/!classSummary);
 		}
 
@@ -1629,7 +1629,7 @@ public class VerveineVisitor extends ASTVisitor {
 
 		// this.msg()
 		else if (expr instanceof ThisExpression) {
-			return this.dico.ensureFamixImplicitVariable(dico.SELF_NAME, this.context.topType(), context.topMethod(),
+			return this.dico.ensureFamixImplicitVariable(null, dico.SELF_NAME, this.context.topType(), context.topMethod(),
 					/*persistIt*/!classSummary);
 		}
 

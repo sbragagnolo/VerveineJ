@@ -744,7 +744,7 @@ public class VerveineJTest_AdHoc extends VerveineJTest_Basic {
 		assertNotNull(xmle);
 		assertNotNull(xmle.getSourceAnchor());
 		assertEquals(IndexedFileAnchor.class, xmle.getSourceAnchor().getClass());
-		assertEquals("test_src/ad_hoc/annotations/XmlElement.java", ((IndexedFileAnchor)xmle.getSourceAnchor()).getFileName());
+		assertEquals("test_src/ad_hoc/annotations" + File.separator + "XmlElement.java", ((IndexedFileAnchor)xmle.getSourceAnchor()).getFileName());
 		assertEquals(62, ((IndexedFileAnchor)xmle.getSourceAnchor()).getStartPos());
 		assertEquals(176, ((IndexedFileAnchor)xmle.getSourceAnchor()).getEndPos());
 		

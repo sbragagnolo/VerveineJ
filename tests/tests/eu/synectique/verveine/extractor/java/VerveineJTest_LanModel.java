@@ -13,6 +13,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.file.*;
 import java.util.Collection;
 
 import org.junit.Before;
@@ -57,7 +58,11 @@ public class VerveineJTest_LanModel extends VerveineJTest_Basic {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		new File(VerveineJParser.OUTPUT_FILE).delete();
+		Path path = Paths.get(VerveineJParser.OUTPUT_FILE);
+		Files.delete(path);
+		// NOTE: On windows this delete might fail if tests are launched in parallel processes
+		// this causes assertions to fail.
+		// so don't run the test in parallel
 
 		String[] files = new String[] {
 				"AbstractDestinationAddress.java",
@@ -132,16 +137,16 @@ public class VerveineJTest_LanModel extends VerveineJTest_Basic {
 	public void testClassProperties() {
 		Namespace pckg = VerveineUtilsForTests.detectFamixElement(repo, Namespace.class, "lan");
 		assertNotNull(pckg);
-		assertEquals("lan", pckg.getName());	
+		assertEquals("lan", pckg.getName());
 
-		eu.synectique.verveine.core.gen.famix.Class nodeClass = VerveineUtilsForTests.detectFamixElement(repo,eu.synectique.verveine.core.gen.famix.Class.class, "Node");
+	    eu.synectique.verveine.core.gen.famix.Class nodeClass = VerveineUtilsForTests.detectFamixElement(repo,eu.synectique.verveine.core.gen.famix.Class.class, "Node");
 		assertNotNull(nodeClass);
 		assertEquals("Node", nodeClass.getName());
 		assertEquals(11, nodeClass.getMethods().size());
 		assertEquals(2, nodeClass.getAttributes().size());
 		assertSame(pckg, nodeClass.getContainer());
 		assertFalse(nodeClass.getIsInterface());
-		
+
 		pckg = VerveineUtilsForTests.detectFamixElement(repo, Namespace.class, "server");
 		assertNotNull(pckg);
 		assertEquals("server", pckg.getName());
